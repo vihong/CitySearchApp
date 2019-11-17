@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>City App</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Montserrat|Montserrat+Alternates&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            /* height: 100vh; */
+            display: flex;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            background-image: url(./img/NewYork.jpg);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        #form {
+            /* border: 1px solid black; */
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 100px;
+        }
+
+        #input {
+            border: 5px solid lightgrey;
+            border-radius: 10px;
+            margin-top: 20%;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .suggestions {
+            margin: 0;
+            padding: 0;
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: auto;
+            width: 90%;
+            background-color:  rgba(250, 250, 250 ,0.9);
+        }
+
+        .suggestions li {
+            list-style: none;
+            border-bottom: 1px solid black;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            padding-left: 5px;
+            padding-right: 5px;
+            display: flex;
+            justify-content: space-between;
+            text-transform: capitalize;
+        }
+
+        .highlightMatches {
+            background-color: orange;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="form" action="">
+        <input id="input" type="text" class="search" placeholder="Type in a city or state">
+        <ul class="suggestions">
+            <!-- <li>
+                <span class="name">Boston, Massachusset</span>
+                <span class="population">6,000 people</span>
+            </li>
+            <li>
+                <span class="name">Boston, Massachusset</span>
+                <span class="population">6,000 people</span>
+            </li> -->
+        </ul>
+    </form>
+    <script>
+        const endpoint = "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json";
+
+        const cities = [];
+
+        fetch(endpoint)
+            .then(blob => blob.json())
+            .then(data => cities.push(...data));
+
+
+
+
+
+        function findMatches(wordToMatch, cities) {
+            return cities.filter(place => {
+                const regex = new RegExp(wordToMatch, 'gi');
+                return place.city.match(regex) || place.state.match(regex);
+            });
+        }
+
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function displayMatches() {
+            const matchArray = findMatches(this.value, cities);
+            const numberOfMatches = matchArray.length;
+            const html = matchArray.map(place => {
+                const regex = new RegExp(this.value, 'gi');
+                const cityName = place.city.replace(regex, `<span class="highlightMatches">${this.value}</span>`)
+                const stateName = place.state.replace(regex, `<span class="highlightMatches">${this.value}</span>`)
+                return `
+            <li>
+                <span class="name">${cityName}, ${stateName}</span>
+                <span class="population">${numberWithCommas(place.population)}</span>
+            </li>
+        
+        `;
+            }).join('');
+            suggestions.innerHTML = html;
+        };
+
+
+        const searchInput = document.querySelector('.search');
+        const suggestions = document.querySelector('.suggestions');
+
+
+        searchInput.addEventListener('change', displayMatches);
+        searchInput.addEventListener('keyup', displayMatches);
+
+        /*
+        document.querySelector('input').addEventListener('input', (event) => {
+
+        let resultList = findMatches(event.target.value, cities)
+        for(let result of resultList){
+            console.log(`${result.city}, ${result.state}`);
+            createLabel(result.city);
+        }
+        console.log(`---------------------`);
+        });
+
+
+        function createLabel(result){
+            const newResultCard = document.createElement('ul');
+            newResultCard.innerHTML = result;
+            newResultCard.classList.add('resultCard');
+            document.querySelector('.resultCard').insertAdjacentElement("afterend", newResultCard);
+
+        }
+        */
+
+    </script>
+</body>
+
+</html>
