@@ -16,7 +16,7 @@
             display: flex;
             justify-content: center;
             font-family: 'Montserrat', sans-serif;
-            background-image: url(./img/NewYork.jpg);
+            background-image: url(./NewYork.jpg);
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -132,7 +132,7 @@
         const suggestions = document.querySelector('.suggestions');
 
 
-        searchInput.addEventListener('change', displayMatches);
+        searchInput.addEventListener('input', displayMatches);
         searchInput.addEventListener('keyup', displayMatches);
 
         /*
